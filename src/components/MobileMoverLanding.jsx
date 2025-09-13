@@ -14,6 +14,7 @@ const Button = ({ children, className = "", ...rest }) => (
   </button>
 );
 
+
 /* 追従ライト（前回のものをそのまま） */
 function FollowingLight({ strength = 1 }) {
   const [pos, setPos] = useState({ x: 0.5, y: 0.5 });
@@ -74,7 +75,7 @@ function FollowingLight({ strength = 1 }) {
 
 export default function MobileMoverLanding() {
   const { t, i18n } = useTranslation();
-  const ASSET = ""; // Viteはpublic直下を / で配信。GitHub Pages時は vite.config.js の base を設定。
+  const ASSET = import.meta.env.BASE_URL; 
   const [strength, setStrength] = useState(1);
 
   // セクション監視（強度）
