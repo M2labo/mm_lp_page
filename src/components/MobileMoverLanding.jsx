@@ -15,6 +15,7 @@ const Button = ({ children, className = "", ...rest }) => (
 );
 
 
+
 /* 追従ライト（前回のものをそのまま） */
 function FollowingLight({ strength = 1 }) {
   const [pos, setPos] = useState({ x: 0.5, y: 0.5 });
@@ -90,6 +91,8 @@ export default function MobileMoverLanding() {
 
   const toggleLang = () => i18n.changeLanguage(i18n.language === "ja" ? "en" : "ja");
 
+  
+
   // 事例データ（画像パスのみコード側で管理／テキストはi18n）
   const CASES = [
     { k:"mowing",  img:`${ASSET}/images/cases/mowing.jpg` },
@@ -112,12 +115,14 @@ export default function MobileMoverLanding() {
             <a href="#cases"  className="hover:text-white">{t("nav.cases")}</a>
             <a href="#specs"  className="hover:text-white">{t("nav.specs")}</a>
             <a href="#contact"className="hover:text-white">{t("nav.contact")}</a>
+            <a href="#contact"className="hover:text-white">{t("nav.purchase")}</a> {/* ← 追加 */}
+
           </nav>
           <div className="hidden md:flex items-center gap-3">
             <button onClick={toggleLang} className="rounded-full px-4 py-2 border border-white/40 text-white text-sm hover:bg-white hover:text-black transition" aria-label="toggle language">
               {i18n.language === "ja" ? "EN" : "JP"}
             </button>
-            <Button>{t("cta.request")}</Button>
+            <Button onClick={()=>{location.href='#contact'}}>{t("cta.request")}</Button>
             <button className="rounded-full px-5 py-2 border border-[#cddc39] text-[#cddc39] hover:bg-[#cddc39] hover:text-black transition">{t("cta.mypage")}</button>
           </div>
         </div>

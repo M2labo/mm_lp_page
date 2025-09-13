@@ -1,5 +1,5 @@
 {
-  "nav": { "features": "Features", "video": "Video", "cases": "Use Cases", "specs": "Specs", "contact": "Contact" },
+  "nav": { "features": "Features", "video": "Video", "cases": "Use Cases", "specs": "Specs", "contact": "Contact" ,"purchase": "Purchase" },
   "hero": { "catch": "Farmer’s Partner.", "sub": "Transport, spraying and mowing — all in one. A reliable partner for the future of smart farming." },
   "cta": { "demo": "Book a Demo", "brochure": "1-minute Brochure", "request": "Request Info", "mypage": "MyPage" },
   "video": { "title": "Product Video", "desc": "Discover MobileMover in one minute." },
@@ -12,5 +12,18 @@
   },
   "specs": { "title": "Key Specifications", "items": [["Dimensions", "1200 × 600 × 350 mm"], ["Operating time", "Up to 8 hours"], ["Payload", "80 kg"], ["Guidance", "GNSS / SLAM / Tag"], ["Dust/Water", "IP54-equivalent"], ["App", "Managed with companion app"]] },
   "contact": { "title": "Contact", "desc": "For consultations and demo requests.", "name": "Name", "email": "Email", "msg": "Message", "send": "Send" },
-  "footer": "All rights reserved."
+  "footer": "All rights reserved.",
+  "purchase": {
+    "title": "Purchase",
+    "lead": "Price range: JPY 1.0–1.5M (before tax, varies by configuration). Choose modules to match your use case.",
+    "range": "Price Range",
+    "selectWork": "Work (Use Case)",
+    "works": { "mowing":"Mowing", "spray":"Greenhouse Spraying", "herbicide":"Apple Orchard Herbicide" },
+    "options": "Add-on Options",
+    "opt": { "camera":"Monitoring Camera", "tag":"Tag Navigation Kit", "support":"Remote Support" },
+    "estimate":"Rough Estimate",
+    "requestQuote":"Request a Quote",
+    "financing":"Financing Options",
+    "contactLead":"We will propose the best configuration for your timing and budget."
+  }
 }
