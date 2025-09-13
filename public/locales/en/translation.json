@@ -1,0 +1,16 @@
+{
+  "nav": { "features": "Features", "video": "Video", "cases": "Use Cases", "specs": "Specs", "contact": "Contact" },
+  "hero": { "catch": "Farmer’s Partner.", "sub": "Transport, spraying and mowing — all in one. A reliable partner for the future of smart farming." },
+  "cta": { "demo": "Book a Demo", "brochure": "1-minute Brochure", "request": "Request Info", "mypage": "MyPage" },
+  "video": { "title": "Product Video", "desc": "Discover MobileMover in one minute." },
+  "cases": {
+    "title": "Use Cases",
+    "desc": "Practical applications in real fields.",
+    "mowing": { "badge": "Mowing", "title": "Efficient mowing of ridges and orchards", "desc": "Maintains uniform cutting height at constant autonomous speed. Operator focuses on safety.", "bullets": ["Stable constant-speed cutting", "Obstacle detection & avoidance", "Automatic daily report"], "image": "/images/cases/mowing.jpg" },
+    "sprayHouse": { "badge": "Greenhouse Spraying", "title": "Uniform & efficient spraying in facilities", "desc": "Tag + SLAM navigation along aisles. Logs chemical amounts and driving data for reproducibility.", "bullets": ["Tag/SLAM navigation", "Spray logging", "Safety stop zones"], "image": "/images/cases/spray-house.jpg" },
+    "herbicideApple": { "badge": "Apple Orchard Herbicide", "title": "Smooth row driving with uniform spray", "desc": "Stable even on slopes; keeps margin from trees while spraying evenly.", "bullets": ["Tree-margin control", "Torque compensation on slopes", "Automatic spray adjustment"], "image": "/images/cases/herbicide-apple.jpg" }
+  },
+  "specs": { "title": "Key Specifications", "items": [["Dimensions", "1200 × 600 × 350 mm"], ["Operating time", "Up to 8 hours"], ["Payload", "80 kg"], ["Guidance", "GNSS / SLAM / Tag"], ["Dust/Water", "IP54-equivalent"], ["App", "Managed with companion app"]] },
+  "contact": { "title": "Contact", "desc": "For consultations and demo requests.", "name": "Name", "email": "Email", "msg": "Message", "send": "Send" },
+  "footer": "All rights reserved."
+}

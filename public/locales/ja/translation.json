@@ -1,0 +1,16 @@
+{
+  "nav": { "features": "特長", "video": "動画", "cases": "導入例", "specs": "仕様", "contact": "お問い合わせ" },
+  "hero": { "catch": "農家の相棒。", "sub": "搬送・散布・草刈りを一台で。スマート農業の未来を支える、頼れるパートナー。" },
+  "cta": { "demo": "デモを予約", "brochure": "1 分でわかる資料", "request": "資料請求", "mypage": "MyPage" },
+  "video": { "title": "製品紹介ムービー", "desc": "MobileMoverの機能を1分でご覧いただけます。" },
+  "cases": {
+    "title": "導入事例",
+    "desc": "現場での具体的な活用シーンをご紹介します。",
+    "mowing": { "badge": "草刈り", "title": "畦畔・園地の草刈りを省力化", "desc": "刈高を均一に保ちながら一定速度で自律走行。人は安全監視に専念できます。", "bullets": ["一定速で安定刈り", "障害物検知で回避", "日報自動生成"], "image": "/images/cases/mowing.jpg" },
+    "sprayHouse": { "badge": "ハウス内防除", "title": "施設栽培の防除をムラなく・効率的に", "desc": "タグやSLAMを併用して通路に沿って巡回。薬液量・走行ログを記録し再現性を担保。", "bullets": ["タグ/SLAM誘導", "吐出量ロギング", "安全停止ゾーン設定"], "image": "/images/cases/spray-house.jpg" },
+    "herbicideApple": { "badge": "りんご園 除草剤散布", "title": "列間をなめらかに走行し均一散布", "desc": "傾斜や凹凸でも安定。樹間マージンを守りながら、必要量を均一に散布します。", "bullets": ["樹間マージン制御", "坂道トルク補正", "散布量の自動補正"], "image": "/images/cases/herbicide-apple.jpg" }
+  },
+  "specs": { "title": "主要スペック", "items": [["サイズ", "1200 × 600 × 350 mm"], ["稼働時間", "最大8時間"], ["最大積載", "80kg"], ["誘導方式", "GNSS / SLAM / タグ併用"], ["防塵・防水", "IP54相当"], ["アプリ", "専用アプリで管理可能"]] },
+  "contact": { "title": "お問い合わせ", "desc": "導入のご相談やデモ依頼はこちらから。", "name": "お名前", "email": "メールアドレス", "msg": "ご相談内容", "send": "送信" },
+  "footer": "All rights reserved."
+}
