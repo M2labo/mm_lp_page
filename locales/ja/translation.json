@@ -1,5 +1,5 @@
 {
-  "nav": { "features": "特長", "video": "動画", "cases": "導入例", "specs": "仕様", "contact": "お問い合わせ" },
+  "nav": { "features": "特長", "video": "動画", "cases": "導入例", "specs": "仕様", "contact": "お問い合わせ","purchase": "購入" },
   "hero": { "catch": "農家の相棒。", "sub": "搬送・散布・草刈りを一台で。スマート農業の未来を支える、頼れるパートナー。" },
   "cta": { "demo": "デモを予約", "brochure": "1 分でわかる資料", "request": "資料請求", "mypage": "MyPage" },
   "video": { "title": "製品紹介ムービー", "desc": "MobileMoverの機能を1分でご覧いただけます。" },
@@ -12,5 +12,21 @@
   },
   "specs": { "title": "主要スペック", "items": [["サイズ", "1200 × 600 × 350 mm"], ["稼働時間", "最大8時間"], ["最大積載", "80kg"], ["誘導方式", "GNSS / SLAM / タグ併用"], ["防塵・防水", "IP54相当"], ["アプリ", "専用アプリで管理可能"]] },
   "contact": { "title": "お問い合わせ", "desc": "導入のご相談やデモ依頼はこちらから。", "name": "お名前", "email": "メールアドレス", "msg": "ご相談内容", "send": "送信" },
-  "footer": "All rights reserved."
+  "footer": "All rights reserved.",
+  "purchase": {
+    "title": "購入",
+    "lead": "価格帯は 100〜150万円（税別・構成により変動）。用途に合わせてモジュールをお選びいただけます。",
+    "range": "想定価格帯",
+    "selectWork": "ワーク（用途）",
+    "works": { "mowing":"草刈り", "spray":"ハウス内防除", "herbicide":"りんご園 除草剤散布" },
+    "options": "追加オプション",
+    "opt": { "camera":"見守りカメラ", "tag":"タグ誘導セット", "support":"リモートサポート" },
+    "estimate":"概算見積",
+    "requestQuote":"見積依頼",
+    "financing":"分割・リース相談",
+    "contactLead":"導入時期や予算に応じて最適な構成をご提案します。"
+  }
+
+
+
 }
