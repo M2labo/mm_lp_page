@@ -1,0 +1,122 @@
+/* ========= MobileMover: Payment UI Guard Styles ========= */
+:root {
+  --mm-bg: #000;
+  --mm-text: #fff;
+  --mm-subtle: #a1a1aa; /* zinc-400-ish */
+  --mm-border: rgba(255,255,255,0.1);
+  --mm-border-2: rgba(255,255,255,0.2);
+  --mm-card: #121317;  /* deep gray */
+  --mm-card-2: #0b0c0f;
+  --mm-accent: #a3e635; /* lime-400-ish */
+  --mm-accent-weak: rgba(163,230,53,0.15);
+}
+
+/* 全体の崩れ防止 */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin: 0; background: var(--mm-bg); color: var(--mm-text); }
+
+/* 2カラムの骨格が崩れた時の保険 */
+.mm-two-col {
+  display: grid;
+  gap: 2.5rem; /* 40px */
+}
+@media (min-width: 1024px) {
+  .mm-two-col {
+    grid-template-columns: minmax(0,1fr) 420px; /* 左可変 / 右固定 */
+    align-items: start;
+  }
+}
+
+/* sticky の効きが無効化されがちな環境対策（transform親の影響を受けないように注意） */
+.mm-sticky-aside {
+  position: sticky;
+  top: 96px; /* 24 * 4 (pt-16相当) */
+}
+
+/* 見積カード本体（右カラムの枠） */
+.mm-aside-card {
+  background: linear-gradient(180deg, rgba(24,24,27,0.8), rgba(24,24,27,0.4));
+  border: 1px solid var(--mm-border);
+  border-radius: 16px;
+  box-shadow: 0 20px 45px rgba(0,0,0,.45);
+  padding: 24px;
+}
+
+/* 情報カード（リース案内など） */
+.mm-info-card {
+  background: rgba(39,39,42,0.7); /* zinc-800/70 */
+  border: 1px solid var(--mm-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* 決済ボタン（右側グリッドのボタン） */
+.mm-pay-btn {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(163,230,53,0.5);
+  background: rgba(163,230,53,0.10);
+  color: #d9ffc2;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+.mm-pay-btn:hover { background: rgba(163,230,53,0.2); }
+.mm-pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ========= Modal（ポップアップ） ========= */
+.mm-modal-root { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+.mm-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); }
+.mm-modal-panel {
+  position: relative;
+  width: min(520px, calc(100% - 32px));
+  background: #111216;
+  color: #fff;
+  border: 1px solid var(--mm-border);
+  border-radius: 16px;
+  box-shadow: 0 18px 60px rgba(0,0,0,.6);
+  overflow: hidden;
+}
+.mm-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px; border-bottom: 1px solid var(--mm-border);
+}
+.mm-modal-title { font-size: 16px; font-weight: 600; margin: 0; }
+.mm-modal-close {
+  border: 0; background: transparent; color: #d4d4d8;
+  padding: 6px 8px; border-radius: 6px; cursor: pointer;
+}
+.mm-modal-close:hover { background: rgba(255,255,255,0.08); }
+.mm-modal-body { padding: 20px; }
+
+/* Square のカード iFrame が潰れないための保険 */
+#card-container,
+#sq-card-container, /* 念のため別IDも */
+#square-card-container {
+  width: 100%;
+  min-height: 48px; /* iFrameが0px化しないように */
+}
+
+/* 入力類が見えなくなる事故の保険 */
+.mm-input, .mm-textarea {
+  width: 100%; border: 1px solid var(--mm-border-2); border-radius: 10px;
+  background: #0f1013; color: #e5e7eb; padding: 10px 12px;
+}
+.mm-input::placeholder, .mm-textarea::placeholder { color: #9ca3af; }
+
+/* セクション余白（HEROとの間延び対策の保険） */
+.mm-section-pad { padding: 24px; }
+
+/* 価格の数字が折り返して崩れるときの保険 */
+.mm-price { font-weight: 600; font-size: 32px; line-height: 1.15; word-break: keep-all; white-space: nowrap; }
+@media (min-width: 768px) { .mm-price { font-size: 40px; } }
+
+/* ハッシュスクロールのズレ防止（固定ヘッダー分） */
+:root { --mm-header-h: 64px; }
+
+.hash-anchor {
+  scroll-margin-top: calc(var(--mm-header-h) + 12px);
+}

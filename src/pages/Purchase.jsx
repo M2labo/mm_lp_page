@@ -1,56 +1,57 @@
+// src/pages/PurchaseConfigurator.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-// 既存のUI部品がある場合は活用。ない場合でも動くようにフォールバック。
 import Section from "../components/Section";
 import Button from "../components/Button";
 import { Input, Textarea } from "../components/Field";
+import Modal from "../components/Modal";
+import SquareCardWidget from "../components/SquareCardWidget";
+import "../styles/mm-pay.css"; // 崩れ防止のガードCSS
 
-/**
- * MobileMover 購入コンフィギュレータ（iPhone風）
- * - カラー/ワーク/オプション選択でイラストが切り替わり、合計がリアルタイム更新
- * - 価格はふわっとカウントアップ、選択時にカードが微妙に拡大
- * - 右側に sticky の見積もり＆見積依頼フォーム
- */
 export default function PurchaseConfigurator() {
-    const ASSET = import.meta.env.BASE_URL; 
-  const { t, i18n } = useTranslation();
+  const ASSET = import.meta.env.BASE_URL;
+  const { i18n } = useTranslation();
 
   // 設定（暫定価格）
   const BASE = 1_000_000;
   const WORKS = {
-    mowing: { labelJa: "草刈り", labelEn: "Mowing", price: 200_000 },
-    spray: { labelJa: "散布", labelEn: "Spray", price: 250_000 },
-    herbicide: { labelJa: "除草剤散布", labelEn: "Herbicide", price: 300_000 },
+    mowing: { key: "mowing", labelJa: "草刈り", labelEn: "Mowing", price: 200_000, descJa: "法面・通路などの草刈りを自動化。", descEn: "Automate mowing on slopes and lanes." },
+    spray: { key: "spray", labelJa: "散布", labelEn: "Spray", price: 250_000, descJa: "液剤散布（肥料・活力剤等）に対応。", descEn: "Liquid spraying for fertilizers etc." },
+    herbicide: { key: "herbicide", labelJa: "除草剤散布", labelEn: "Herbicide", price: 300_000, descJa: "除草剤の安全散布に特化。", descEn: "Specialized in herbicide spraying." },
   };
-
   const OPTIONS = {
-    camera: { labelJa: "見守りカメラ", labelEn: "Monitoring camera", price: 80_000 },
-    tag: { labelJa: "タグ誘導セット", labelEn: "Tag guidance set", price: 120_000 },
-    support: { labelJa: "リモートサポート", labelEn: "Remote support", price: 60_000 },
+    camera: { key: "camera", labelJa: "見守りカメラ", labelEn: "Monitoring camera", price: 80_000, tipJa: "遠隔で様子を確認", tipEn: "Remote monitoring" },
+    tag: { key: "tag", labelJa: "タグ誘導セット", labelEn: "Tag guidance set", price: 120_000, tipJa: "タグでルート誘導", tipEn: "Tag-based guidance" },
+    support: { key: "support", labelJa: "リモートサポート", labelEn: "Remote support", price: 60_000, tipJa: "導入後の保守を強化", tipEn: "Post-install support" },
   };
-
   const COLORS = [
     { key: "leaf", nameJa: "リーフ", nameEn: "Leaf", hex: "#c9da2a" },
     { key: "gray", nameJa: "グレー", nameEn: "Gray", hex: "#6e6e6e" },
-
   ];
 
   const [color, setColor] = useState(COLORS[0]);
   const [work, setWork] = useState("mowing");
   const [opts, setOpts] = useState({ camera: true, tag: false, support: true });
 
-  // 合計計算
+  // 合計
   const total = useMemo(() => {
     let t = BASE + WORKS[work].price;
-    Object.keys(OPTIONS).forEach((k) => {
-      if (opts[k]) t += OPTIONS[k].price;
-    });
+    Object.keys(OPTIONS).forEach((k) => { if (opts[k]) t += OPTIONS[k].price; });
     return t;
   }, [work, opts]);
 
-  // 数字アニメーション
   const animated = useAnimatedNumber(total);
+
+  // 決済モーダル
+  const [payOpen, setPayOpen] = useState(false);
+
+  // 見積フォーム（3DS精度向上に利用）
+  const [formCompany, setFormCompany] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formPhone, setFormPhone] = useState("");
+  const [formZip, setFormZip] = useState("");
+  const [formMsg, setFormMsg] = useState("");
 
   const formatJPY = (n) =>
     n.toLocaleString(i18n.language === "ja" ? "ja-JP" : "en-US", {
@@ -58,73 +59,78 @@ export default function PurchaseConfigurator() {
       currency: "JPY",
       maximumFractionDigits: 0,
     });
-
   const label = (ja, en) => (i18n.language === "ja" ? ja : en);
 
   return (
-    <main className="min-h-screen bg-black text-white pt-16">
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        <div className="absolute -right-40 -top-20 size-[420px] rounded-full bg-lime-300/20 blur-3xl" />
-        <div className="absolute left-10 -bottom-10 size-[320px] rounded-full bg-yellow-200/10 blur-3xl" />
-        <div className="max-w-7xl mx-auto px-6 py-14 md:py-20 grid md:grid-cols-2 gap-10 items-center">
+    <main style={{ minHeight: "100vh", background: "var(--mm-bg)", color: "var(--mm-text)", paddingTop: "4rem" }}>
+      {/* ===== HERO ===== */}
+      <section className="mm-section-pad" style={{ position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", right: "-160px", top: "-80px", width: 420, height: 420, borderRadius: "9999px", background: "rgba(190, 242, 100, 0.12)", filter: "blur(40px)" }} />
+        <div style={{ position: "absolute", left: 40, bottom: -40, width: 320, height: 320, borderRadius: "9999px", background: "rgba(253, 230, 138, 0.10)", filter: "blur(32px)" }} />
+        <div className="mm-two-col" style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div>
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
+            <h1 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 600, letterSpacing: "-0.02em" }}>
               {label("購入", "Purchase")}
             </h1>
-            <p className="mt-4 text-zinc-300">
-              {label(
-                "価格帯は 100〜150万円（税別・構成により変動）。用途に合わせてモジュールをお選びいただけます。",
-                "Price range ¥1.0–1.5M (excl. tax), depending on configuration. Pick modules to fit your use."
-              )}
+            <p style={{ marginTop: 16, color: "var(--mm-subtle)" }}>
+              {label("価格帯は 100〜150万円（税別・構成により変動）。用途に合わせてモジュールをお選びいただけます。", "Price range ¥1.0–1.5M (excl. tax), depending on configuration. Pick modules to fit your use.")}
             </p>
 
             {/* カラー選択 */}
-            <div className="mt-8">
-              <div className="text-sm text-zinc-400 mb-2">{label("カラー", "Color")}</div>
-              <div className="flex gap-3">
+            <div style={{ marginTop: 32 }}>
+              <div style={{ fontSize: 12, color: "var(--mm-subtle)", marginBottom: 8 }}>{label("カラー", "Color")}</div>
+              <div style={{ display: "flex", gap: 12 }}>
                 {COLORS.map((c) => (
                   <button
                     key={c.key}
                     onClick={() => setColor(c)}
-                    className={`relative size-9 rounded-full border transition-transform ${
-                      color.key === c.key ? "ring-2 ring-lime-400 scale-110" : "hover:scale-105 border-white/20"
-                    }`}
-                    style={{ backgroundColor: c.hex }}
                     aria-label={label(c.nameJa, c.nameEn)}
+                    style={{
+                      width: 36, height: 36, borderRadius: "9999px",
+                      background: c.hex,
+                      border: `1px solid ${color.key === c.key ? "var(--mm-accent)" : "var(--mm-border-2)"}`,
+                      outline: color.key === c.key ? `2px solid var(--mm-accent-weak)` : "none",
+                      transform: color.key === c.key ? "scale(1.08)" : "scale(1)",
+                      transition: "transform .15s ease"
+                    }}
                   />
                 ))}
               </div>
             </div>
           </div>
 
-          {/* イラストプレビュー */}
-          <div className="relative">
+          {/* イラスト */}
+          <div style={{ position: "relative" }}>
             <motion.div
               key={color.key}
               initial={{ opacity: 0, y: 12, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.45, ease: "easeOut" }}
-              className="relative"
             >
-              <div className="relative mx-auto w-full max-w-[520px] aspect-square overflow-hidden rounded-2xl shadow-2xl">
-                <img src={`${ASSET}/images/purchase/${color.key}.png`} alt="MobileMover" className="w-full h-full object-cover object-center" />
-                {/* カラーオーバーレイ（色替え演出） */}
-
+              <div style={{
+                margin: "0 auto", width: "min(520px,100%)", aspectRatio: "1/1",
+                overflow: "hidden", borderRadius: 16,
+                boxShadow: "0 25px 60px rgba(0,0,0,.55)", background: "#0d0f12"
+              }}>
+                <img
+                  src={`${ASSET}/images/purchase/${color.key}.png`}
+                  alt="MobileMover"
+                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+                />
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* コンフィグセクション */}
+      {/* ===== コンフィグセクション ===== */}
       <Section bg="light">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-[minmax(0,1fr)_420px] gap-10 px-6">
+        <div className="mm-two-col" style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px" }}>
           {/* 左：選択UI */}
           <div>
-            {/* ワーク */}
-            <h2 className="text-2xl font-semibold">{label("ワーク（用途）", "Work")}</h2>
-            <div className="mt-4 grid sm:grid-cols-3 gap-4">
+            {/* ワーク（用途） */}
+            <h2 style={{ fontSize: 22, fontWeight: 600 }}>{label("ワーク（用途）", "Work")}</h2>
+            <div style={{ marginTop: 16, display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
               {Object.keys(WORKS).map((k) => {
                 const active = work === k;
                 const w = WORKS[k];
@@ -133,27 +139,35 @@ export default function PurchaseConfigurator() {
                     key={k}
                     onClick={() => setWork(k)}
                     whileTap={{ scale: 0.98 }}
-                    className={`group text-left p-4 rounded-2xl border bg-zinc-900/60 backdrop-blur-sm hover:border-white/30 transition ${
-                      active ? "border-lime-400 shadow-[0_0_0_2px_rgba(163,230,53,0.15)]" : "border-white/10"
-                    }`}
+                    style={{
+                      textAlign: "left", padding: 16, borderRadius: 16,
+                      border: `1px solid ${active ? "var(--mm-accent)" : "var(--mm-border)"}`,
+                      background: "rgba(24,24,27,0.6)",
+                      boxShadow: active ? "0 0 0 2px rgba(163,230,53,0.15)" : "none",
+                      transition: "border .15s ease, box-shadow .15s ease"
+                    }}
                   >
-                    <div className="flex items-start justify-between gap-2">
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
                       <div>
-                        <div className="font-medium">
-                          {label(w.labelJa, w.labelEn)}
-                        </div>
-                        <div className="text-sm text-zinc-400 mt-1">{formatJPY(w.price)}</div>
+                        <div style={{ fontWeight: 600 }}>{label(w.labelJa, w.labelEn)}</div>
+                        <div style={{ fontSize: 13, color: "var(--mm-subtle)", marginTop: 4 }}>{label(w.descJa, w.descEn)}</div>
+                        <div style={{ fontSize: 13, color: "var(--mm-subtle)", marginTop: 6 }}>{formatJPY(w.price)}</div>
                       </div>
-                      <div className={`size-5 rounded-full border ${active ? "bg-lime-400 border-lime-300" : "border-white/20"}`} />
+                      <div style={{
+                        width: 20, height: 20, borderRadius: "9999px",
+                        border: `1px solid ${active ? "var(--mm-accent)" : "var(--mm-border-2)"}`,
+                        background: active ? "var(--mm-accent)" : "transparent",
+                        flex: "0 0 auto"
+                      }} />
                     </div>
                   </motion.button>
                 );
               })}
             </div>
 
-            {/* オプション */}
-            <h3 className="text-xl font-semibold mt-10">{label("追加オプション", "Options")}</h3>
-            <div className="mt-4 grid sm:grid-cols-3 gap-4">
+            {/* 追加オプション */}
+            <h3 style={{ fontSize: 20, fontWeight: 600, marginTop: 32 }}>{label("追加オプション", "Options")}</h3>
+            <div style={{ marginTop: 16, display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
               {Object.keys(OPTIONS).map((k) => {
                 const active = !!opts[k];
                 const o = OPTIONS[k];
@@ -162,42 +176,40 @@ export default function PurchaseConfigurator() {
                     key={k}
                     onClick={() => setOpts((p) => ({ ...p, [k]: !p[k] }))}
                     whileTap={{ scale: 0.98 }}
-                    className={`text-left p-4 rounded-2xl border bg-zinc-900/60 hover:border-white/30 transition ${
-                      active ? "border-lime-400 ring-1 ring-lime-300/30" : "border-white/10"
-                    }`}
                     aria-pressed={active}
+                    style={{
+                      textAlign: "left", padding: 16, borderRadius: 16,
+                      border: `1px solid ${active ? "var(--mm-accent)" : "var(--mm-border)"}`,
+                      background: "rgba(24,24,27,0.6)",
+                      outline: active ? "1px solid rgba(163,230,53,0.3)" : "none",
+                      transition: "border .15s ease, outline .15s ease"
+                    }}
                   >
-                    <div className="font-medium">{label(o.labelJa, o.labelEn)}</div>
-                    <div className="text-sm text-zinc-400 mt-1">{formatJPY(o.price)}</div>
-                    <div className="mt-3 text-xs text-zinc-500">
-                      {label("タップで切替", "Tap to toggle")}
-                    </div>
+                    <div style={{ fontWeight: 600 }}>{label(o.labelJa, o.labelEn)}</div>
+                    <div style={{ fontSize: 13, color: "var(--mm-subtle)", marginTop: 4 }}>{formatJPY(o.price)}</div>
+                    <div style={{ marginTop: 8, fontSize: 12, color: "#9ca3af" }}>{label(o.tipJa, o.tipEn)}</div>
                   </motion.button>
                 );
               })}
             </div>
 
             {/* 価格内訳 */}
-            <div className="mt-10 p-5 rounded-2xl bg-zinc-900/70 border border-white/10">
-              <div className="text-sm text-zinc-400">{label("内訳", "Breakdown")}</div>
-              <dl className="mt-3 space-y-2">
+            <div style={{ marginTop: 32, padding: 20, borderRadius: 16, background: "rgba(24,24,27,0.7)", border: "1px solid var(--mm-border)" }}>
+              <div style={{ fontSize: 12, color: "var(--mm-subtle)" }}>{label("内訳", "Breakdown")}</div>
+              <dl style={{ marginTop: 12, display: "grid", gap: 8 }}>
                 <Row label={label("本体価格", "Base price")} value={formatJPY(BASE)} />
                 <Row label={label("ワーク", "Work")} value={`${label(WORKS[work].labelJa, WORKS[work].labelEn)} / ${formatJPY(WORKS[work].price)}`} />
                 {Object.keys(OPTIONS).map((k) => (
-                  <Row
-                    key={k}
-                    label={label(OPTIONS[k].labelJa, OPTIONS[k].labelEn)}
-                    value={opts[k] ? formatJPY(OPTIONS[k].price) : "—"}
-                  />
+                  <Row key={k} label={label(OPTIONS[k].labelJa, OPTIONS[k].labelEn)} value={opts[k] ? formatJPY(OPTIONS[k].price) : "—"} />
                 ))}
               </dl>
             </div>
           </div>
 
-          {/* 右：見積フォーム（sticky） */}
-          <aside className="lg:sticky lg:top-24 self-start">
-            <div className="p-6 rounded-2xl bg-gradient-to-b from-zinc-900/80 to-zinc-900/40 border border-white/10 shadow-2xl">
-              <div className="text-sm text-zinc-400">{label("概算見積", "Estimated total")}</div>
+          {/* 右：見積フォーム + 支払いボタン（ポップアップ） */}
+          <aside className="mm-sticky-aside">
+            <div className="mm-aside-card">
+              <div style={{ fontSize: 12, color: "var(--mm-subtle)" }}>{label("概算見積", "Estimated total")}</div>
               <AnimatePresence mode="popLayout">
                 <motion.div
                   key={animated}
@@ -205,33 +217,60 @@ export default function PurchaseConfigurator() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.25 }}
-                  className="text-4xl font-semibold mt-1 tracking-tight"
+                  className="mm-price"
+                  style={{ marginTop: 4 }}
                 >
                   {formatJPY(animated)}
                 </motion.div>
               </AnimatePresence>
 
-              <form className="mt-6 space-y-3">
-                <Input placeholder={label("会社名 / 氏名", "Company / Name")} />
-                <Input type="email" placeholder="Email" />
-                <Input placeholder={label("電話番号（任意）", "Phone (optional)" )} />
-                <Textarea rows={4} placeholder={label("ご相談内容・導入時期・ご予算など", "Your request / timeline / budget")} />
+              {/* 見積フォーム（Email/郵便番号は 3DS精度UP に活用） */}
+              <form style={{ marginTop: 24, display: "grid", gap: 12 }} onSubmit={(e) => e.preventDefault()}>
+                <Input placeholder={label("会社名 / 氏名", "Company / Name")} className="mm-input"
+                       value={formCompany} onChange={(e) => setFormCompany(e.target.value)} />
+                <Input type="email" placeholder="Email" className="mm-input"
+                       value={formEmail} onChange={(e) => setFormEmail(e.target.value)} />
+                <Input placeholder={label("電話番号（任意）", "Phone (optional)")} className="mm-input"
+                       value={formPhone} onChange={(e) => setFormPhone(e.target.value)} />
+                <Input placeholder={label("郵便番号（任意）", "Postal code (optional)")} className="mm-input"
+                       value={formZip} onChange={(e) => setFormZip(e.target.value)} />
+                <Textarea rows={4} placeholder={label("ご相談内容・導入時期・ご予算など", "Your request / timeline / budget")} className="mm-textarea"
+                          value={formMsg} onChange={(e) => setFormMsg(e.target.value)} />
 
-                <Button type="submit" className="w-full">
-                  {label("この仕様で見積もりを依頼", "Request a quote")}
-                </Button>
+                <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
+                  <Button type="submit" className="w-full">{label("この仕様で見積もりを依頼", "Request a quote")}</Button>
+                  <button type="button" onClick={() => setPayOpen(true)} className="mm-pay-btn">
+                    {label("カードで支払う", "Pay by card")}
+                  </button>
+                </div>
               </form>
 
-              <div className="mt-6 p-4 rounded-xl bg-zinc-800/70 border border-white/10">
-                <div className="text-sm text-zinc-400">{label("分割・リース相談", "Installments / Lease")}</div>
-                <p className="text-zinc-300 mt-2">
-                  {label(
-                    "分割・リースのご相談も承ります。法人/個人事業主向けのプランをご用意。",
-                    "Installment or lease plans are available for companies and sole proprietors."
-                  )}
+              <div className="mm-info-card" style={{ marginTop: 24 }}>
+                <div style={{ fontSize: 12, color: "var(--mm-subtle)" }}>{label("分割・リース相談", "Installments / Lease")}</div>
+                <p style={{ color: "#e4e4e7", marginTop: 8 }}>
+                  {label("分割・リースのご相談も承ります。法人/個人事業主向けのプランをご用意。", "Installment or lease plans are available for companies and sole proprietors.")}
                 </p>
               </div>
             </div>
+
+            {/* モーダル（Portal 描画） */}
+            <Modal open={payOpen} onClose={() => setPayOpen(false)} title={label("カード決済（Sandbox）", "Card Payment (Sandbox)")}>
+              <div style={{ display: "grid", gap: 16 }}>
+                <p style={{ fontSize: 13, color: "var(--mm-subtle)", margin: 0 }}>
+                  {label("下記にカード情報を入力してお支払いください。", "Enter your card details below to complete the purchase.")}
+                </p>
+                <SquareCardWidget
+                  amountJPY={total}
+                  email={formEmail || ""}
+                  postalCode={formZip || ""}
+                  onSuccess={() => { alert(label("決済に成功しました。ありがとうございます！","Payment succeeded. Thank you!")); setPayOpen(false); }}
+                  onError={(e) => console.error("square error:", e)}
+                />
+                <div style={{ fontSize: 12, color: "#8b8b93" }}>
+                  {label("Sandbox環境です。テストカード番号をご利用ください。", "Sandbox environment. Use test card numbers.")}
+                </div>
+              </div>
+            </Modal>
           </aside>
         </div>
       </Section>
@@ -239,39 +278,34 @@ export default function PurchaseConfigurator() {
   );
 }
 
-/** 内訳行 */
+/** 価格の行（内訳） */
 function Row({ label, value }) {
   return (
-    <div className="flex items-center justify-between gap-6 text-sm">
-      <dt className="text-zinc-400">{label}</dt>
-      <dd className="text-zinc-200">{value}</dd>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, fontSize: 14 }}>
+      <dt style={{ color: "var(--mm-subtle)" }}>{label}</dt>
+      <dd style={{ color: "#e5e7eb" }}>{value}</dd>
     </div>
   );
 }
 
-/** 数字を滑らかにアニメーションさせる */
+/** 数字アニメーション（easeOutCubic） */
 function useAnimatedNumber(target, duration = 500) {
   const [value, setValue] = useState(target);
   const ref = useRef(null);
-
   useEffect(() => {
     const start = performance.now();
     const from = value;
     const diff = target - from;
-
     if (diff === 0) return;
     cancelAnimationFrame(ref.current);
-
     const tick = (now) => {
       const p = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+      const eased = 1 - Math.pow(1 - p, 3);
       setValue(Math.round(from + diff * eased));
       if (p < 1) ref.current = requestAnimationFrame(tick);
     };
-
     ref.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(ref.current);
   }, [target]);
-
   return value;
 }

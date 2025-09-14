@@ -23,7 +23,6 @@ export default function Header() {
           <Link to="/#video" className="hover:text-white">{t("nav.video")}</Link>
           <Link to="/#cases" className="hover:text-white">{t("nav.cases")}</Link>
           <Link to="/#specs" className="hover:text-white">{t("nav.specs")}</Link>
-          <Link to="/#contact" className="hover:text-white">{t("nav.contact")}</Link>
           <Link to="/purchase" className="hover:text-white">{t("nav.purchase")}</Link>
         </nav>
 
@@ -35,7 +34,7 @@ export default function Header() {
           >
             {i18n.language === "ja" ? "EN" : "JP"}
           </button>
-          <Button>{t("cta.request")}</Button>
+          <Button onClick={() => { location.href = "#contact"; }}>{t("cta.request")}</Button>
           <Link to="/mypage"
              className="rounded-full px-5 py-2 border border-[#cddc39] text-[#cddc39] hover:bg-[#cddc39] hover:text-black transition">
             {t("cta.mypage")}
