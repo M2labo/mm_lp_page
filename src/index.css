@@ -5,6 +5,6 @@
 html { scroll-behavior: smooth; }
 body {
   font-family: "Inter", "Noto Sans JP", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  background: #0a0a0a;   /* ダーク基調 */
-  color: #fff;
+  background: #ffffff;   /* 白ベース */
+  color: #111827; 
 }

@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Header from "../components/Header.jsx";
+
 const IconSparkles = (props) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
     <path d="M12 2l1.6 3.8L18 7.4l-3.4 1.6L12 13l-2.6-4-3.4-1.6 4.4-1.6L12 2zM19 14l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1zM5 14l.7 1.6 1.6.7-1.6.7L5 19l-.7-1.6L2.7 16l1.6-.7L5 14z" />
@@ -20,7 +21,7 @@ const Button = ({ children, className = "", ...rest }) => (
   </button>
 );
 
-/* 追従ライト（z-index 固定） */
+/* 追従ライト（白ベース用：multiply で白飛び防止） */
 function FollowingLight({ strength = 1 }) {
   const [pos, setPos] = useState({ x: 0.5, y: 0.5 });
   const targetRef = useRef({ x: 0.5, y: 0.5 });
@@ -91,19 +92,14 @@ function FollowingLight({ strength = 1 }) {
     left: `${pos.x * 100}%`,
     transform: "translate(-50%, -50%)",
   };
-  const outerOpacity = 0.22 * strength,
-    whiteOpacity = Math.max(0.04, 0.08 * strength),
-    coreOpacity = 0.7 * strength;
-  const domeBrightness = 150 + Math.round(50 * strength),
-    domeContrast = 125 + Math.round(10 * strength);
+  const outerOpacity = 0.18 * strength; // 白ベースで少し弱め
+  const whiteOpacity = Math.max(0.03, 0.06 * strength);
+  const coreOpacity = 0.5 * strength;
 
   return (
-    <div
-      className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: 70 }}
-    >
+    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 70 }}>
       <div
-        className="absolute rounded-full blur-3xl mix-blend-screen"
+        className="absolute rounded-full blur-3xl mix-blend-multiply"
         style={{
           ...style,
           width: "44vw",
@@ -118,9 +114,9 @@ function FollowingLight({ strength = 1 }) {
           ...style,
           width: "28vw",
           height: "28vw",
-          backgroundColor: `rgba(255,255,255,${whiteOpacity})`,
-          WebkitBackdropFilter: `brightness(${domeBrightness}%) contrast(${domeContrast}%)`,
-          backdropFilter: `brightness(${domeBrightness}%) contrast(${domeContrast}%)`,
+          backgroundColor: `rgba(0,0,0,${whiteOpacity})`, // 白ベースで軽く陰影寄りに
+          backdropFilter: `brightness(115%) contrast(105%)`,
+          WebkitBackdropFilter: `brightness(115%) contrast(105%)`,
         }}
       />
       <div
@@ -129,7 +125,7 @@ function FollowingLight({ strength = 1 }) {
           ...style,
           width: "12vw",
           height: "12vw",
-          backgroundColor: `rgba(255,255,255,${coreOpacity})`,
+          backgroundColor: `rgba(0,0,0,${coreOpacity})`,
         }}
       />
     </div>
@@ -150,8 +146,7 @@ export default function MobileMoverLanding() {
 
   useEffect(() => {
     const map = (id) =>
-      ({ hero: 1.0, video: 0.75, cases: 0.65, specs: 0.6, contact: 0.7 }[id] ??
-      0.75);
+      ({ hero: 1.0, video: 0.75, cases: 0.65, specs: 0.6, contact: 0.7 }[id] ?? 0.75);
     const onI = (es) => {
       let top = { id: null, ratio: 0 };
       es.forEach((e) => {
@@ -171,13 +166,6 @@ export default function MobileMoverLanding() {
 
   const toggleLang = () => i18n.changeLanguage(i18n.language === "ja" ? "en" : "ja");
 
-  // 事例データ
-  const CASES = [
-    { k: "mowing", img: `${ASSET}/images/cases/mowing.jpg` },
-    { k: "sprayHouse", img: `${ASSET}/images/cases/spray-house.jpg` },
-    { k: "herbicideApple", img: `${ASSET}/images/cases/herbicide-apple.jpg` },
-  ];
-
   // ===== z-index の基準（固定値） =====
   const Z = {
     header: 2000,
@@ -191,13 +179,10 @@ export default function MobileMoverLanding() {
     const v = document.getElementById("mm-demo-video");
     if (!v) return;
 
-    // すでに poster 指定があるなら何もしない（外部で設定済み想定）
     if (v.getAttribute("poster")) return;
 
-    // iOS/Safari 等の制約に配慮：loadedmetadata 後に一瞬 seek → canvas capture
     const onLoaded = async () => {
       try {
-        // ページによっては currentTime=0 だと描画前のブラウザがあるため微小に進める
         v.currentTime = 0.01;
         await new Promise((r) => v.addEventListener("seeked", r, { once: true }));
 
@@ -208,12 +193,9 @@ export default function MobileMoverLanding() {
         ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
         const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
         v.setAttribute("poster", dataUrl);
-
-        // 一部ブラウザで黒フレームになるのを避けるため再ロード
-        // （poster を適用しつつ video は通常の初期状態へ）
         v.load();
       } catch {
-        // 失敗しても致命的ではないので無視
+        // no-op
       }
     };
 
@@ -224,8 +206,8 @@ export default function MobileMoverLanding() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
+    <div className="min-h-screen bg-white text-zinc-900">
+      {/* Header（別ファイル側で text-zinc-800 / hover:text-black に） */}
       <Header />
 
       {/* global light */}
@@ -239,24 +221,26 @@ export default function MobileMoverLanding() {
         className="hash-anchor relative h-[100vh] flex items-center justify-center px-6 overflow-hidden"
         style={{ paddingTop: "64px" }}
       >
-        {/* 背景ビデオ（再生失敗時は静止画へ） */}
+        {/* 背景ビデオ */}
         <video
           className="absolute inset-0 h-full w-full object-cover"
-          style={{ opacity: 0.28, zIndex: Z.video, background: "#0b0d10" }}
+          style={{ opacity: 0.22, zIndex: Z.video, background: "#eef1f4" }}
           src={`${ASSET}/videos/hero.mp4`}
           autoPlay
           muted
           loop
           playsInline
           poster={`${ASSET}/images/hero-fallback.jpg`}
-          onError={(e) => { e.currentTarget.style.display = "none"; }}
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
         />
-        {/* 黒グラデ（やや薄め） */}
+        {/* 白グラデ（上：少し濃い→下：薄い） */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0.8), rgba(0,0,0,0.86))",
+              "linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.85), rgba(255,255,255,0.92))",
             zIndex: 10,
           }}
         />
@@ -269,15 +253,17 @@ export default function MobileMoverLanding() {
             <h1 className="text-5xl md:text-6xl font-light leading-tight">
               {t("hero.catch")}
               <br />
-              <span className="text-[#cddc39] font-semibold drop-shadow-md">MobileMover</span>
+              <span className="text-[#cddc39] font-semibold drop-shadow-[0_1px_0_rgba(0,0,0,0.08)]">
+                MobileMover
+              </span>
               <span className="inline-flex pl-2 align-middle text-[#cddc39]">
                 <IconSparkles className="h-8 w-8" />
               </span>
             </h1>
-            <p className="mt-6 text-lg text-zinc-300">{t("hero.sub")}</p>
+            <p className="mt-6 text-lg text-zinc-600">{t("hero.sub")}</p>
             <div className="mt-10 flex flex-wrap items-center gap-6">
               <Button>{t("cta.demo")}</Button>
-              <button className="rounded-full px-10 py-3 border border-white text-white hover:bg-white hover:text-black transition shadow-md text-sm md:text-base">
+              <button className="rounded-full px-10 py-3 border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white transition shadow-sm text-sm md:text-base">
                 {t("cta.brochure")}
               </button>
             </div>
@@ -286,26 +272,25 @@ export default function MobileMoverLanding() {
             <img
               src={`${ASSET}/images/mobilemover-illustration.png`}
               alt="MobileMover"
-              className="max-h-[480px] w-auto rounded-2xl shadow-2xl"
-              style={{ background: "#0d0f12" }}
+              className="max-h-[480px] w-auto rounded-2xl shadow-2xl bg-white"
             />
           </div>
         </div>
       </section>
 
-      {/* ===== VIDEO（ここが“自動サムネ生成”の対象） ===== */}
+      {/* ===== VIDEO ===== */}
       <section
         id="video"
         ref={videoRef}
         data-sec-id="video"
-        className="hash-anchor py-32 bg-zinc-900/80"
+        className="hash-anchor py-32 bg-zinc-50"
         style={{ position: "relative", zIndex: Z.content }}
       >
         <div className="text-center">
           <h2 className="text-3xl font-semibold">{t("video.title")}</h2>
-          <p className="mt-4 text-zinc-400">{t("video.desc")}</p>
+          <p className="mt-4 text-zinc-600">{t("video.desc")}</p>
 
-          <div className="mx-auto mt-8 w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden">
+          <div className="mx-auto mt-8 w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden bg-white border border-zinc-200">
             <video
               id="mm-demo-video"
               className="w-full h-auto block bg-black"
@@ -313,7 +298,6 @@ export default function MobileMoverLanding() {
               controls
               playsInline
               preload="metadata"
-              // poster を未指定の場合、上の useEffect が自動生成します
             >
               <source src={`${ASSET}/videos/hero.mp4`} type="video/mp4" />
             </video>
@@ -326,56 +310,64 @@ export default function MobileMoverLanding() {
         id="cases"
         ref={casesRef}
         data-sec-id="cases"
-        className="py-32 bg-black/80 hash-anchor"
+        className="py-32 bg-white hash-anchor"
         style={{ position: "relative", zIndex: Z.content }}
       >
         <div className="text-center">
           <h2 className="text-3xl font-semibold">{t("cases.title")}</h2>
-          <p className="mt-4 text-zinc-400">{t("cases.desc")}</p>
+          <p className="mt-4 text-zinc-600">{t("cases.desc")}</p>
 
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto px-6">
-          {[
-            { k: "mowing", img: `${ASSET}/images/cases/mowing.jpg` },
-            { k: "sprayHouse", img: `${ASSET}/images/cases/spray-house.jpg` },
-            { k: "herbicideApple", img: `${ASSET}/images/cases/herbicide-apple.jpg` },
-          ].map(({ k, img }) => (
-            <article
-              key={k}
-              className="group rounded-2xl overflow-hidden bg-zinc-900/60 border border-white/10 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition text-left"
-            >
-              <div className="relative h-48">
-                <img
-                  src={img}
-                  alt={t(`cases.${k}.title`)}
-                  className="absolute inset-0 h-full w-full object-cover opacity-90 group-hover:opacity-100 transition"
-                />
-                <span className="absolute left-4 top-4 inline-flex items-center rounded-full bg-[#cddc39] text-black text-xs font-semibold px-3 py-1 shadow">
-                  {t(`cases.${k}.badge`)}
-                </span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-white">{t(`cases.${k}.title`)}</h3>
-                <p className="mt-2 text-sm text-zinc-400">{t(`cases.${k}.desc`)}</p>
-                <ul className="mt-4 space-y-1 text-sm text-zinc-300">
-                  {(t(`cases.${k}.bullets`, { returnObjects: true }) || []).map((b, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="mt-1 h-2 w-2 rounded-full bg-[#cddc39]/70" />
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-6 flex items-center gap-3">
-                  <a href="#contact" className="rounded-full px-4 py-2 text-sm font-medium bg-[#cddc39] text-black hover:brightness-110 transition">
-                    {i18n.language === "ja" ? "この事例で相談" : "Consult on this use case"}
-                  </a>
-                  <a href="#video" className="rounded-full px-4 py-2 text-sm font-medium border border-white/40 text-white hover:bg-white hover:text-black transition">
-                    {i18n.language === "ja" ? "デモ動画を見る" : "Watch demo video"}
-                  </a>
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto px-6">
+            {[
+              { k: "mowing", img: `${ASSET}/images/cases/mowing.jpg` },
+              { k: "sprayHouse", img: `${ASSET}/images/cases/spray-house.jpg` },
+              { k: "herbicideApple", img: `${ASSET}/images/cases/herbicide-apple.jpg` },
+            ].map(({ k, img }) => (
+              <article
+                key={k}
+                className="group rounded-2xl overflow-hidden bg-white border border-zinc-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition text-left"
+              >
+                <div className="relative h-48">
+                  <img
+                    src={img}
+                    alt={t(`cases.${k}.title`)}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  <span className="absolute left-4 top-4 inline-flex items-center rounded-full bg-[#cddc39] text-black text-xs font-semibold px-3 py-1 shadow">
+                    {t(`cases.${k}.badge`)}
+                  </span>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-zinc-900">
+                    {t(`cases.${k}.title`)}
+                  </h3>
+                  <p className="mt-2 text-sm text-zinc-600">{t(`cases.${k}.desc`)}</p>
+                  <ul className="mt-4 space-y-1 text-sm text-zinc-700">
+                    {(t(`cases.${k}.bullets`, { returnObjects: true }) || []).map((b, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="mt-1 h-2 w-2 rounded-full bg-[#cddc39]/70" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 flex items-center gap-3">
+                    <a
+                      href="#contact"
+                      className="rounded-full px-4 py-2 text-sm font-medium bg-[#cddc39] text-black hover:brightness-110 transition"
+                    >
+                      {i18n.language === "ja" ? "この事例で相談" : "Consult on this use case"}
+                    </a>
+                    <a
+                      href="#video"
+                      className="rounded-full px-4 py-2 text-sm font-medium border border-zinc-300 text-zinc-700 hover:bg-zinc-900 hover:text-white transition"
+                    >
+                      {i18n.language === "ja" ? "デモ動画を見る" : "Watch demo video"}
+                    </a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -384,7 +376,7 @@ export default function MobileMoverLanding() {
         id="specs"
         ref={specsRef}
         data-sec-id="specs"
-        className="hash-anchor py-32 bg-zinc-900/80"
+        className="hash-anchor py-32 bg-zinc-50"
         style={{ position: "relative", zIndex: Z.content }}
       >
         <div className="text-center">
@@ -392,11 +384,16 @@ export default function MobileMoverLanding() {
         </div>
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto px-6 text-left">
           {(t("specs.items", { returnObjects: true }) || []).map(([label, value], i) => (
-            <div key={i} className="flex items-center gap-4 rounded-xl bg-zinc-800 p-4 shadow">
-              <div className="h-10 w-10 rounded-full bg-[#cddc39]/20 flex items-center justify-center text-[#cddc39]">★</div>
+            <div
+              key={i}
+              className="flex items-center gap-4 rounded-xl bg-white p-4 shadow-sm border border-zinc-200"
+            >
+              <div className="h-10 w-10 rounded-full bg-[#cddc39]/20 flex items-center justify-center text-[#cddc39]">
+                ★
+              </div>
               <div>
-                <p className="text-sm text-zinc-400">{label}</p>
-                <p className="text-lg font-medium text-white">{value}</p>
+                <p className="text-sm text-zinc-600">{label}</p>
+                <p className="text-lg font-medium text-zinc-900">{value}</p>
               </div>
             </div>
           ))}
@@ -408,24 +405,39 @@ export default function MobileMoverLanding() {
         id="contact"
         ref={contactRef}
         data-sec-id="contact"
-        className="py-32 bg-black/80 hash-anchor"
+        className="py-32 bg-zinc-50 hash-anchor"
         style={{ position: "relative", zIndex: Z.content }}
       >
         <div className="text-center">
           <h2 className="text-3xl font-semibold">{t("contact.title")}</h2>
-          <p className="mt-4 text-zinc-400">{t("contact.desc")}</p>
+          <p className="mt-4 text-zinc-600">{t("contact.desc")}</p>
           <form className="mt-8 space-y-4 max-w-md mx-auto px-6">
-            <input type="text" placeholder={t("contact.name")} className="w-full rounded-md p-3 bg-white text-black placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#cddc39]" />
-            <input type="email" placeholder={t("contact.email")} className="w-full rounded-md p-3 bg-white text-black placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#cddc39]" />
-            <textarea placeholder={t("contact.msg")} rows={4} className="w-full rounded-md p-3 bg-white text-black placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#cddc39]" />
-            <button type="submit" className="w-full rounded-md bg-[#cddc39] text-black py-3 font-semibold hover:brightness-110">
+            <input
+              type="text"
+              placeholder={t("contact.name")}
+              className="w-full rounded-md p-3 bg-white text-black placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#cddc39] border border-zinc-200"
+            />
+            <input
+              type="email"
+              placeholder={t("contact.email")}
+              className="w-full rounded-md p-3 bg-white text-black placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#cddc39] border border-zinc-200"
+            />
+            <textarea
+              placeholder={t("contact.msg")}
+              rows={4}
+              className="w-full rounded-md p-3 bg-white text-black placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#cddc39] border border-zinc-200"
+            />
+            <button
+              type="submit"
+              className="w-full rounded-md bg-[#cddc39] text-black py-3 font-semibold hover:brightness-110"
+            >
               {t("contact.send")}
             </button>
           </form>
         </div>
       </section>
 
-      <footer className="py-12 border-t border-zinc-800 bg-black text-center text-zinc-500 text-sm">
+      <footer className="py-12 border-t border-zinc-200 bg-white text-center text-zinc-500 text-sm">
         <p>© {new Date().getFullYear()} M2Labo. {t("footer")}</p>
       </footer>
     </div>

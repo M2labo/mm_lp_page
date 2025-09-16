@@ -103,7 +103,7 @@ body { margin: 0; background: var(--mm-bg); color: var(--mm-text); }
 /* 入力類が見えなくなる事故の保険 */
 .mm-input, .mm-textarea {
   width: 100%; border: 1px solid var(--mm-border-2); border-radius: 10px;
-  background: #0f1013; color: #e5e7eb; padding: 10px 12px;
+  background: #eaedf1; color: #e5e7eb; padding: 10px 12px;
 }
 .mm-input::placeholder, .mm-textarea::placeholder { color: #9ca3af; }
 

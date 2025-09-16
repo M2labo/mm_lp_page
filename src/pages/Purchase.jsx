@@ -62,23 +62,25 @@ export default function PurchaseConfigurator() {
   const label = (ja, en) => (i18n.language === "ja" ? ja : en);
 
   return (
-    <main style={{ minHeight: "100vh", background: "var(--mm-bg)", color: "var(--mm-text)", paddingTop: "4rem" }}>
+    // 白ベース化：背景/文字を固定のライト配色に
+    <main style={{ minHeight: "100vh", background: "#ffffff", color: "#111827", paddingTop: "4rem" }}>
       {/* ===== HERO ===== */}
       <section className="mm-section-pad" style={{ position: "relative", overflow: "hidden" }}>
+        {/* ライト用でもそのまま映える淡い装飾 */}
         <div style={{ position: "absolute", right: "-160px", top: "-80px", width: 420, height: 420, borderRadius: "9999px", background: "rgba(190, 242, 100, 0.12)", filter: "blur(40px)" }} />
         <div style={{ position: "absolute", left: 40, bottom: -40, width: 320, height: 320, borderRadius: "9999px", background: "rgba(253, 230, 138, 0.10)", filter: "blur(32px)" }} />
         <div className="mm-two-col" style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div>
-            <h1 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 600, letterSpacing: "-0.02em" }}>
+            <h1 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 600, letterSpacing: "-0.02em", color: "#0f172a" }}>
               {label("購入", "Purchase")}
             </h1>
-            <p style={{ marginTop: 16, color: "var(--mm-subtle)" }}>
+            <p style={{ marginTop: 16, color: "#4b5563" }}>
               {label("価格帯は 100〜150万円（税別・構成により変動）。用途に合わせてモジュールをお選びいただけます。", "Price range ¥1.0–1.5M (excl. tax), depending on configuration. Pick modules to fit your use.")}
             </p>
 
             {/* カラー選択 */}
             <div style={{ marginTop: 32 }}>
-              <div style={{ fontSize: 12, color: "var(--mm-subtle)", marginBottom: 8 }}>{label("カラー", "Color")}</div>
+              <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 8 }}>{label("カラー", "Color")}</div>
               <div style={{ display: "flex", gap: 12 }}>
                 {COLORS.map((c) => (
                   <button
@@ -88,8 +90,8 @@ export default function PurchaseConfigurator() {
                     style={{
                       width: 36, height: 36, borderRadius: "9999px",
                       background: c.hex,
-                      border: `1px solid ${color.key === c.key ? "var(--mm-accent)" : "var(--mm-border-2)"}`,
-                      outline: color.key === c.key ? `2px solid var(--mm-accent-weak)` : "none",
+                      border: `1px solid ${color.key === c.key ? "#cddc39" : "#d1d5db"}`,
+                      outline: color.key === c.key ? `2px solid rgba(205,220,57,0.35)` : "none",
                       transform: color.key === c.key ? "scale(1.08)" : "scale(1)",
                       transition: "transform .15s ease"
                     }}
@@ -99,7 +101,7 @@ export default function PurchaseConfigurator() {
             </div>
           </div>
 
-          {/* イラスト */}
+          {/* イラスト（白面＋軽い影へ） */}
           <div style={{ position: "relative" }}>
             <motion.div
               key={color.key}
@@ -110,7 +112,7 @@ export default function PurchaseConfigurator() {
               <div style={{
                 margin: "0 auto", width: "min(520px,100%)", aspectRatio: "1/1",
                 overflow: "hidden", borderRadius: 16,
-                boxShadow: "0 25px 60px rgba(0,0,0,.55)", background: "#0d0f12"
+                boxShadow: "0 18px 40px rgba(0,0,0,.18)", background: "#ffffff", border: "1px solid #e5e7eb"
               }}>
                 <img
                   src={`${ASSET}/images/purchase/${color.key}.png`}
@@ -124,12 +126,13 @@ export default function PurchaseConfigurator() {
       </section>
 
       {/* ===== コンフィグセクション ===== */}
+      {/* Section 自体の配色はコンポーネント側に依存（ここでは要素の色だけライト化） */}
       <Section bg="light">
         <div className="mm-two-col" style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px" }}>
           {/* 左：選択UI */}
           <div>
             {/* ワーク（用途） */}
-            <h2 style={{ fontSize: 22, fontWeight: 600 }}>{label("ワーク（用途）", "Work")}</h2>
+            <h2 style={{ fontSize: 22, fontWeight: 600, color: "#0f172a" }}>{label("ワーク（用途）", "Work")}</h2>
             <div style={{ marginTop: 16, display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
               {Object.keys(WORKS).map((k) => {
                 const active = work === k;
@@ -141,22 +144,23 @@ export default function PurchaseConfigurator() {
                     whileTap={{ scale: 0.98 }}
                     style={{
                       textAlign: "left", padding: 16, borderRadius: 16,
-                      border: `1px solid ${active ? "var(--mm-accent)" : "var(--mm-border)"}`,
-                      background: "rgba(24,24,27,0.6)",
-                      boxShadow: active ? "0 0 0 2px rgba(163,230,53,0.15)" : "none",
-                      transition: "border .15s ease, box-shadow .15s ease"
+                      border: `1px solid ${active ? "#cddc39" : "#e5e7eb"}`,
+                      background: "#ffffff",
+                      boxShadow: active ? "0 0 0 2px rgba(205,220,57,0.15)" : "0 1px 2px rgba(0,0,0,0.04)",
+                      transition: "border .15s ease, box-shadow .15s ease",
+                      color: "#111827"
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
                       <div>
                         <div style={{ fontWeight: 600 }}>{label(w.labelJa, w.labelEn)}</div>
-                        <div style={{ fontSize: 13, color: "var(--mm-subtle)", marginTop: 4 }}>{label(w.descJa, w.descEn)}</div>
-                        <div style={{ fontSize: 13, color: "var(--mm-subtle)", marginTop: 6 }}>{formatJPY(w.price)}</div>
+                        <div style={{ fontSize: 13, color: "#6b7280", marginTop: 4 }}>{label(w.descJa, w.descEn)}</div>
+                        <div style={{ fontSize: 13, color: "#6b7280", marginTop: 6 }}>{formatJPY(w.price)}</div>
                       </div>
                       <div style={{
                         width: 20, height: 20, borderRadius: "9999px",
-                        border: `1px solid ${active ? "var(--mm-accent)" : "var(--mm-border-2)"}`,
-                        background: active ? "var(--mm-accent)" : "transparent",
+                        border: `1px solid ${active ? "#cddc39" : "#d1d5db"}`,
+                        background: active ? "#cddc39" : "transparent",
                         flex: "0 0 auto"
                       }} />
                     </div>
@@ -166,7 +170,7 @@ export default function PurchaseConfigurator() {
             </div>
 
             {/* 追加オプション */}
-            <h3 style={{ fontSize: 20, fontWeight: 600, marginTop: 32 }}>{label("追加オプション", "Options")}</h3>
+            <h3 style={{ fontSize: 20, fontWeight: 600, marginTop: 32, color: "#0f172a" }}>{label("追加オプション", "Options")}</h3>
             <div style={{ marginTop: 16, display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
               {Object.keys(OPTIONS).map((k) => {
                 const active = !!opts[k];
@@ -179,23 +183,25 @@ export default function PurchaseConfigurator() {
                     aria-pressed={active}
                     style={{
                       textAlign: "left", padding: 16, borderRadius: 16,
-                      border: `1px solid ${active ? "var(--mm-accent)" : "var(--mm-border)"}`,
-                      background: "rgba(24,24,27,0.6)",
-                      outline: active ? "1px solid rgba(163,230,53,0.3)" : "none",
-                      transition: "border .15s ease, outline .15s ease"
+                      border: `1px solid ${active ? "#cddc39" : "#e5e7eb"}`,
+                      background: "#ffffff",
+                      outline: active ? "1px solid rgba(205,220,57,0.30)" : "none",
+                      transition: "border .15s ease, outline .15s ease",
+                      boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                      color: "#111827"
                     }}
                   >
                     <div style={{ fontWeight: 600 }}>{label(o.labelJa, o.labelEn)}</div>
-                    <div style={{ fontSize: 13, color: "var(--mm-subtle)", marginTop: 4 }}>{formatJPY(o.price)}</div>
-                    <div style={{ marginTop: 8, fontSize: 12, color: "#9ca3af" }}>{label(o.tipJa, o.tipEn)}</div>
+                    <div style={{ fontSize: 13, color: "#6b7280", marginTop: 4 }}>{formatJPY(o.price)}</div>
+                    <div style={{ marginTop: 8, fontSize: 12, color: "#6b7280" }}>{label(o.tipJa, o.tipEn)}</div>
                   </motion.button>
                 );
               })}
             </div>
 
-            {/* 価格内訳 */}
-            <div style={{ marginTop: 32, padding: 20, borderRadius: 16, background: "rgba(24,24,27,0.7)", border: "1px solid var(--mm-border)" }}>
-              <div style={{ fontSize: 12, color: "var(--mm-subtle)" }}>{label("内訳", "Breakdown")}</div>
+            {/* 価格内訳（白面+薄ボーダー） */}
+            <div style={{ marginTop: 32, padding: 20, borderRadius: 16, background: "#ffffff", border: "1px solid #e5e7eb", boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }}>
+              <div style={{ fontSize: 12, color: "#6b7280" }}>{label("内訳", "Breakdown")}</div>
               <dl style={{ marginTop: 12, display: "grid", gap: 8 }}>
                 <Row label={label("本体価格", "Base price")} value={formatJPY(BASE)} />
                 <Row label={label("ワーク", "Work")} value={`${label(WORKS[work].labelJa, WORKS[work].labelEn)} / ${formatJPY(WORKS[work].price)}`} />
@@ -208,8 +214,8 @@ export default function PurchaseConfigurator() {
 
           {/* 右：見積フォーム + 支払いボタン（ポップアップ） */}
           <aside className="mm-sticky-aside">
-            <div className="mm-aside-card">
-              <div style={{ fontSize: 12, color: "var(--mm-subtle)" }}>{label("概算見積", "Estimated total")}</div>
+            <div className="mm-aside-card" style={{ background: "#ffffff", border: "1px solid #e5e7eb", boxShadow: "0 1px 2px rgba(0,0,0,0.04)", color: "#111827" }}>
+              <div style={{ fontSize: 12, color: "#6b7280" }}>{label("概算見積", "Estimated total")}</div>
               <AnimatePresence mode="popLayout">
                 <motion.div
                   key={animated}
@@ -218,13 +224,13 @@ export default function PurchaseConfigurator() {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.25 }}
                   className="mm-price"
-                  style={{ marginTop: 4 }}
+                  style={{ marginTop: 4, color: "#0f172a" }}
                 >
                   {formatJPY(animated)}
                 </motion.div>
               </AnimatePresence>
 
-              {/* 見積フォーム（Email/郵便番号は 3DS精度UP に活用） */}
+              {/* 見積フォーム */}
               <form style={{ marginTop: 24, display: "grid", gap: 12 }} onSubmit={(e) => e.preventDefault()}>
                 <Input placeholder={label("会社名 / 氏名", "Company / Name")} className="mm-input"
                        value={formCompany} onChange={(e) => setFormCompany(e.target.value)} />
@@ -239,15 +245,19 @@ export default function PurchaseConfigurator() {
 
                 <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
                   <Button type="submit" className="w-full">{label("この仕様で見積もりを依頼", "Request a quote")}</Button>
-                  <button type="button" onClick={() => setPayOpen(true)} className="mm-pay-btn">
+                  {/* 決済ボタンは白ベース見た目のみ更新 */}
+                  <button type="button" onClick={() => setPayOpen(true)}
+                          className="mm-pay-btn"
+                          style={{ background: "#111827", color: "#ffffff", borderColor: "#111827" }}>
                     {label("カードで支払う", "Pay by card")}
                   </button>
                 </div>
               </form>
 
-              <div className="mm-info-card" style={{ marginTop: 24 }}>
-                <div style={{ fontSize: 12, color: "var(--mm-subtle)" }}>{label("分割・リース相談", "Installments / Lease")}</div>
-                <p style={{ color: "#e4e4e7", marginTop: 8 }}>
+              {/* 情報カード：ライト配色へ */}
+              <div className="mm-info-card" style={{ marginTop: 24, background: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: 16 }}>
+                <div style={{ fontSize: 12, color: "#6b7280" }}>{label("分割・リース相談", "Installments / Lease")}</div>
+                <p style={{ color: "#374151", marginTop: 8 }}>
                   {label("分割・リースのご相談も承ります。法人/個人事業主向けのプランをご用意。", "Installment or lease plans are available for companies and sole proprietors.")}
                 </p>
               </div>
@@ -255,8 +265,8 @@ export default function PurchaseConfigurator() {
 
             {/* モーダル（Portal 描画） */}
             <Modal open={payOpen} onClose={() => setPayOpen(false)} title={label("カード決済（Sandbox）", "Card Payment (Sandbox)")}>
-              <div style={{ display: "grid", gap: 16 }}>
-                <p style={{ fontSize: 13, color: "var(--mm-subtle)", margin: 0 }}>
+              <div style={{ display: "grid", gap: 16, color: "#111827" }}>
+                <p style={{ fontSize: 13, color: "#6b7280", margin: 0 }}>
                   {label("下記にカード情報を入力してお支払いください。", "Enter your card details below to complete the purchase.")}
                 </p>
                 <SquareCardWidget
@@ -266,7 +276,7 @@ export default function PurchaseConfigurator() {
                   onSuccess={() => { alert(label("決済に成功しました。ありがとうございます！","Payment succeeded. Thank you!")); setPayOpen(false); }}
                   onError={(e) => console.error("square error:", e)}
                 />
-                <div style={{ fontSize: 12, color: "#8b8b93" }}>
+                <div style={{ fontSize: 12, color: "#6b7280" }}>
                   {label("Sandbox環境です。テストカード番号をご利用ください。", "Sandbox environment. Use test card numbers.")}
                 </div>
               </div>
@@ -282,8 +292,8 @@ export default function PurchaseConfigurator() {
 function Row({ label, value }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, fontSize: 14 }}>
-      <dt style={{ color: "var(--mm-subtle)" }}>{label}</dt>
-      <dd style={{ color: "#e5e7eb" }}>{value}</dd>
+      <dt style={{ color: "#6b7280" }}>{label}</dt>
+      <dd style={{ color: "#111827" }}>{value}</dd>
     </div>
   );
 }

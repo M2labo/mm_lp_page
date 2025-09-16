@@ -9,21 +9,21 @@ export default function Header() {
   const toggleLang = () => i18n.changeLanguage(i18n.language === "ja" ? "en" : "ja");
 
   return (
-    <header className="fixed top-0 inset-x-0 z-[100] backdrop-blur bg-black/70 border-b border-zinc-800">
+    <header className="fixed top-0 inset-x-0 z-[100] backdrop-blur bg-white/80 border-b border-zinc-200">
       <div className="mx-auto max-w-7xl px-6 lg:px-10 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link to="/">
             <img src={`${ASSET}/images/logo.jpg`} alt="M2Labo Logo" className="h-8 w-8 object-contain" />
           </Link>
-          <Link to="/" className="font-semibold tracking-tight">M2Labo / MobileMover</Link>
+          <Link to="/" className="font-semibold tracking-tight text-zinc-800 hover:text-black">M2Labo / MobileMover</Link>
         </div>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm text-zinc-300">
-          <Link to="/#hero" className="hover:text-white">{t("nav.features")}</Link>
-          <Link to="/#video" className="hover:text-white">{t("nav.video")}</Link>
-          <Link to="/#cases" className="hover:text-white">{t("nav.cases")}</Link>
-          <Link to="/#specs" className="hover:text-white">{t("nav.specs")}</Link>
-          <Link to="/purchase" className="hover:text-white">{t("nav.purchase")}</Link>
+        <nav className="hidden md:flex items-center gap-8 text-sm text-zinc-700">
+          <Link to="/#hero" className="hover:text-black">{t("nav.features")}</Link>
+          <Link to="/#video" className="hover:text-black">{t("nav.video")}</Link>
+          <Link to="/#cases" className="hover:text-black">{t("nav.cases")}</Link>
+          <Link to="/#specs" className="hover:text-black">{t("nav.specs")}</Link>
+          <Link to="/purchase" className="hover:text-black">{t("nav.purchase")}</Link>
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
