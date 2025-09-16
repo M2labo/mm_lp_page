@@ -36,7 +36,7 @@ export default function Header() {
           </button>
           <Button onClick={() => { location.href = "#contact"; }}>{t("cta.request")}</Button>
           <Link to="/mypage"
-             className="rounded-full px-5 py-2 border border-[#cddc39] text-[#cddc39] hover:bg-[#cddc39] hover:text-black transition">
+             className="rounded-full px-5 py-2 border border-[#cddc39] text-zinc-800 hover:bg-[#cddc39] hover:text-black transition">
             {t("cta.mypage")}
           </Link>
         </div>
