@@ -11,6 +11,8 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@aws-amplify/auth": "^6.15.1",
+    "aws-amplify": "^6.15.6",
     "framer-motion": "^12.23.12",
     "i18next": "^25.5.2",
     "i18next-browser-languagedetector": "^8.2.0",
